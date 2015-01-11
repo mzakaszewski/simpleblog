@@ -2,10 +2,20 @@
 
 class BlogController extends \BaseController {
 
-	public function index() 
-	{
-		return View::make('blog.index');
+	private $post;
+
+	function __construct(Post $post) {
+	
+		$this->post = $post;
+			
 	}
 
+	public function index() {
+
+		$posts = $this->post->get();
+
+		dd($posts);
+		return View::make('blog.index');
+	}
 
 }

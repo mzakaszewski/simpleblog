@@ -13,9 +13,16 @@
 		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 			
 			<ul class="nav navbar-nav navbar-right">
+
+				@if (Auth::user())
+
+					<li>{{ link_to_route('admin.post.create', 'Create Post'); }}</li>
+					<li>{{ link_to_route('logout', 'Logout'); }}</li>
+				@else
+
+					<li><a>Login To Backstage</a></li>
 				
-				<li><a>Login To Backstage</a></li>
-					
+				@endif	
 			</ul>
 		</div>
   </div>

@@ -1,26 +1,21 @@
 <?php
 
+use Simpleblog\Validation\SessionValidator;
+use Laracasts\Validation\FormValidationException;
+
 class SessionsController extends \BaseController {
 
-	/**
-	 * Display a listing of the resource.
-	 *
-	 * @return Response
-	 */
-	public function index()
-	{
-		//
+	private $validator;
+
+	function __construct(SessionValidator $validator) {
+	
+		$this->validator = $validator;
+			
 	}
 
-
-	/**
-	 * Show the form for creating a new resource.
-	 *
-	 * @return Response
-	 */
 	public function create()
 	{
-		//
+		return View::make('sessions.create');
 	}
 
 
@@ -29,47 +24,28 @@ class SessionsController extends \BaseController {
 	 *
 	 * @return Response
 	 */
-	public function store()
-	{
-		//
+	public function store() {
+
+		try {
+
+			$input = Input::only('username', 'password');
+
+			$this->validator->validate($input);
+
+			if( Auth::attempt($input)) {
+				
+				return Redirect::to('admin');
+			}
+			
+			return Redirect::back()->withInput()->withErrors(['Couldn\'t find a User with that Username/Password']);
+
+		} catch (FormValidationException $e) {
+		
+			return Redirect::back()->withInput()->withErrors($e->getErrors());
+		
+		}
+			
 	}
-
-
-	/**
-	 * Display the specified resource.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function show($id)
-	{
-		//
-	}
-
-
-	/**
-	 * Show the form for editing the specified resource.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function edit($id)
-	{
-		//
-	}
-
-
-	/**
-	 * Update the specified resource in storage.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function update($id)
-	{
-		//
-	}
-
 
 	/**
 	 * Remove the specified resource from storage.
@@ -77,9 +53,12 @@ class SessionsController extends \BaseController {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function destroy($id)
-	{
-		//
+	public function destroy() {
+
+		Auth::logout();
+		
+		return Redirect::to('/');
+
 	}
 
 
